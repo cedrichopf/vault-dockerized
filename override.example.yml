@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  # Service Configuration
+  # Overwrite or add configuration values to the docker-compose deployment
+  vault:
+    container_name: vault # Remove if using multiple instances
+    # If Traefik is not used, ports can be published by using the section below
+    # to make the Vault instance available, e.g.:
+    #ports:
+    #  - "80:80"
+    networks:
+      - proxy # Remove if Traefik is not used
+    labels:
+      # Traefik configuration for Vault, hostnames need to be changed
+      - traefik.http.routers.vault-http.rule=Host(`vault.example.com`)
+      - traefik.http.routers.vault-http.entrypoints=http
+      - traefik.http.routers.vault-http.middlewares=redirect
+      - traefik.http.routers.vault-https.rule=Host(`vault.example.com`)
+      - traefik.http.routers.vault-https.entrypoints=https
+      - traefik.http.routers.vault-https.tls=true
+      - traefik.http.routers.vault-https.tls.certresolver=letsencrypt
+      - traefik.http.services.vault.loadbalancer.server.port=80
+      - traefik.http.middlewares.redirect.redirectscheme.scheme=https
+
+networks:
+  # The proxy network is used by Traefik to discover and connect the HTTP services
+  proxy:
+    external: true
+  vault:
+    name: vault
+
+# Change the volume configuration as needed, e.g. configure NFS volumes
+volumes:
+  vault-data-vol:
+    name: vault-data
+  vault-file-vol:
+    name: vault-file
+  vault-logs-vol:
+    name: vault-logs
