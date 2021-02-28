@@ -4,14 +4,13 @@ services:
   vault:
     image: vault:latest
     restart: unless-stopped
-    command: server -config /vault/config/server.hcl
+    command: server
     cap_add:
       - IPC_LOCK
     networks:
       - vault
     volumes:
       - ./config/server.hcl:/vault/config/server.hcl
-      - vault-data-vol:/vault/data
       - vault-file-vol:/vault/file
       - vault-logs-vol:/vault/logs
 
@@ -20,6 +19,5 @@ networks:
     external: false
 
 volumes:
-  vault-data-vol:
   vault-file-vol:
   vault-logs-vol:

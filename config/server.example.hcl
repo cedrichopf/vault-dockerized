@@ -1,13 +1,13 @@
 listener "tcp" {
-  address     = "0.0.0.0:80"
+  address     = "0.0.0.0:8200"
   tls_disable = 1
 }
 
-cluster_addr = "http://127.0.0.1:8200"
+// Change the API address to a public endpoint
+api_addr = "https://vault.example.com"
 
-storage "raft" {
-  path = "/vault/data"
-  node_id = "raft_node_1"
+storage "file" {
+  path = "/vault/file"
 }
 
-disable_mlock = true
+ui = true
